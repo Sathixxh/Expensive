@@ -17,9 +17,9 @@ class _MainScreenState extends State<MainScreen> {
 
   void _submitData() {
     final enteredType = _typeController.text;
-    final enteredAmount = double.parse(_amountController.text);
+    final enteredAmount = double.tryParse(_amountController.text);
 
-    if (enteredType.isEmpty || enteredAmount <= 0) {
+    if (enteredType.isEmpty || enteredAmount == null || enteredAmount <= 0) {
       return;
     }
 
@@ -31,7 +31,8 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
 
-    Navigator.of(context).pushNamed('/expenses');
+    _typeController.clear();
+    _amountController.clear();
   }
 
   void _presentDatePicker() {
@@ -46,6 +47,7 @@ class _MainScreenState extends State<MainScreen> {
       }
       setState(() {
         _selectedDate = pickedDate;
+        print(_selectedDate);
       });
     });
   }
@@ -55,36 +57,67 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Expense Tracker'),
-      ),
-      body: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Text(
-                  'Selected Date: ${_selectedDate.toLocal()}'.split(' ')[0],
-                ),
-              ),
-              TextButton(
-                onPressed: _presentDatePicker,
-                child: Text('Choose Date'),
-              ),
-            ],
-          ),
-          TextField(
-            decoration: InputDecoration(labelText: 'Type'),
-            controller: _typeController,
-          ),
-          TextField(
-            decoration: InputDecoration(labelText: 'Amount'),
-            controller: _amountController,
-            keyboardType: TextInputType.number,
-          ),
-          ElevatedButton(
-            onPressed: _submitData,
-            child: Text('Add Expense'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.list),
+            onPressed: () {
+              Navigator.of(context).pushNamed('/expenses');
+            },
           ),
         ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    'Selected Date: ${_selectedDate.toLocal()}'.split(' ')[0],
+                  ),
+                ),
+                TextButton(
+                  onPressed: _presentDatePicker,
+                  child: Text('Choose Date'),
+                ),
+              ],
+            ),
+
+Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+  
+  Container(
+    width: MediaQuery.of(context).size.width* 0.60,
+    child: TextField(
+                decoration: InputDecoration(labelText: 'Type'),
+                controller: _typeController,
+              ),
+  ),
+  Container(
+    width: MediaQuery.of(context).size.width* 0.20,
+    child: 
+            TextField(
+              decoration: InputDecoration(labelText: 'Amount'),
+              controller: _amountController,
+              keyboardType: TextInputType.number,
+            ),
+  ),
+
+
+],),
+
+          
+          
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _submitData,
+              child: Text('Add Expense'),
+            ),
+          ],
+        ),
       ),
     );
   }

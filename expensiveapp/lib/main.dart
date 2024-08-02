@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (ctx) => ExpenseProvider(),
+      create: (context) => ExpenseProvider(),
       child: MaterialApp(
         title: 'Expense Tracker',
         theme: ThemeData(
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         ),
         home: MainScreen(),
         routes: {
-          '/expenses': (ctx) => ExpenseListScreen(),
+          '/expenses': (context) => ExpenseListScreen(),
         },
       ),
     );
