@@ -1,9 +1,10 @@
-// lib/screens/main_screen.dart
+import 'package:animations/animations.dart';
 import 'package:expensiveapp/Domine/provider/mainprovider.dart';
 import 'package:expensiveapp/data/model/expensemodel.dart';
+import 'package:expensiveapp/presentation/listscrenn.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+// Import the new screen
 
 class MainScreen extends StatefulWidget {
   @override
@@ -12,27 +13,42 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   DateTime _selectedDate = DateTime.now();
-  final _typeController = TextEditingController();
-  final _amountController = TextEditingController();
+  final List<Map<String, TextEditingController>> _expenseControllers = [
+    {'type': TextEditingController(), 'amount': TextEditingController()},
+  ];
 
   void _submitData() {
-    final enteredType = _typeController.text;
-    final enteredAmount = double.tryParse(_amountController.text);
+    final provider = Provider.of<ExpenseProvider>(context, listen: false);
+    for (var controllers in _expenseControllers) {
+      final enteredType = controllers['type']!.text;
+      final enteredAmount = double.tryParse(controllers['amount']!.text);
 
-    if (enteredType.isEmpty || enteredAmount == null || enteredAmount <= 0) {
-      return;
+      if (enteredType.isEmpty || enteredAmount == null || enteredAmount <= 0) {
+        return;
+      }
+
+      provider.addExpense(
+        Expense(
+          date: _selectedDate,
+          type: enteredType,
+          amount: enteredAmount,
+        ),
+      );
+
+      controllers['type']!.clear();
+      controllers['amount']!.clear();
     }
 
-    Provider.of<ExpenseProvider>(context, listen: false).addExpense(
-      Expense(
-        date: _selectedDate,
-        type: enteredType,
-        amount: enteredAmount,
-      ),
-    );
+    setState(() {
+      _expenseControllers.clear();
+      _expenseControllers.add({'type': TextEditingController(), 'amount': TextEditingController()});
+    });
+  }
 
-    _typeController.clear();
-    _amountController.clear();
+  void _addNewRow() {
+    setState(() {
+      _expenseControllers.add({'type': TextEditingController(), 'amount': TextEditingController()});
+    });
   }
 
   void _presentDatePicker() {
@@ -56,12 +72,25 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('Expense Tracker'),
         actions: [
-          IconButton(
-            icon: Icon(Icons.list),
-            onPressed: () {
-              Navigator.of(context).pushNamed('/expenses');
+          OpenContainer(
+            closedElevation: 0,
+            closedShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(0),
+              ),
+            ),
+            transitionType: ContainerTransitionType.fadeThrough,
+            closedBuilder: (BuildContext _, VoidCallback openContainer) {
+              return IconButton(
+                icon: Icon(Icons.calendar_today,color: Colors.black,),
+                onPressed: openContainer,
+              );
+            },
+            openBuilder: (BuildContext _, VoidCallback __) {
+              return MonthlySummaryScreen();
             },
           ),
         ],
@@ -69,52 +98,56 @@ class _MainScreenState extends State<MainScreen> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Expanded(
-                  child: Text(
-                    'Selected Date: ${_selectedDate.toLocal()}'.split(' ')[0],
-                  ),
-                ),
                 TextButton(
                   onPressed: _presentDatePicker,
                   child: Text('Choose Date'),
                 ),
+                ElevatedButton(
+                  onPressed: _addNewRow,
+                  child: Text("Add New Row"),
+                ),
               ],
             ),
-
-Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-  
-  Container(
-    width: MediaQuery.of(context).size.width* 0.60,
-    child: TextField(
-                decoration: InputDecoration(labelText: 'Type'),
-                controller: _typeController,
+            Expanded(
+              child: ListView.builder(
+                itemCount: _expenseControllers.length,
+                itemBuilder: (ctx, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.60,
+                          child: TextField(
+                            decoration: InputDecoration(labelText: 'Type'),
+                            controller: _expenseControllers[index]['type'],
+                          ),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.20,
+                          child: TextField(
+                            decoration: InputDecoration(labelText: 'Amount'),
+                            controller: _expenseControllers[index]['amount'],
+                            keyboardType: TextInputType.number,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
-  ),
-  Container(
-    width: MediaQuery.of(context).size.width* 0.20,
-    child: 
-            TextField(
-              decoration: InputDecoration(labelText: 'Amount'),
-              controller: _amountController,
-              keyboardType: TextInputType.number,
             ),
-  ),
-
-
-],),
-
-          
-          
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: _submitData,
-              child: Text('Add Expense'),
+              child: Text('Submit All Expenses'),
             ),
           ],
         ),

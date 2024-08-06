@@ -19,11 +19,10 @@ class MyApp extends StatelessWidget {
         title: 'Expense Tracker',
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          useMaterial3: false
         ),
         home: MainScreen(),
-        routes: {
-          '/expenses': (context) => ExpenseListScreen(),
-        },
+        
       ),
     );
   }
