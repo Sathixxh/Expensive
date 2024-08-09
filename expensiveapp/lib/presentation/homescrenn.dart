@@ -4,7 +4,7 @@ import 'package:expensiveapp/data/model/expensemodel.dart';
 import 'package:expensiveapp/presentation/listscrenn.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-// Import the new screen
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -13,9 +13,29 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   DateTime _selectedDate = DateTime.now();
+  final TextEditingController _initialAmountController = TextEditingController();
+  double _availableBalance = 0.0;
   final List<Map<String, TextEditingController>> _expenseControllers = [
     {'type': TextEditingController(), 'amount': TextEditingController()},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInitialAmount();
+  }
+
+  void _loadInitialAmount() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _availableBalance = prefs.getDouble('initialAmount') ?? 0.0;
+    });
+  }
+
+  void _saveInitialAmount() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('initialAmount', _availableBalance);
+  }
 
   void _submitData() {
     final provider = Provider.of<ExpenseProvider>(context, listen: false);
@@ -34,6 +54,11 @@ class _MainScreenState extends State<MainScreen> {
           amount: enteredAmount,
         ),
       );
+
+      setState(() {
+        _availableBalance -= enteredAmount;
+        _saveInitialAmount();
+      });
 
       controllers['type']!.clear();
       controllers['amount']!.clear();
@@ -101,6 +126,19 @@ class _MainScreenState extends State<MainScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            TextField(
+              decoration: InputDecoration(labelText: 'Initial Amount'),
+              controller: _initialAmountController,
+              keyboardType: TextInputType.number,
+              onSubmitted: (_) {
+                setState(() {
+                  _availableBalance = double.tryParse(_initialAmountController.text) ?? 0.0;
+                  _saveInitialAmount();
+                });
+              },
+            ),
+            SizedBox(height: 10),
+            Text("Available Balance: \$${_availableBalance.toStringAsFixed(2)}"),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
