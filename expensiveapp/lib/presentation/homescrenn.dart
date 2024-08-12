@@ -100,24 +100,28 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: Colors.white,
         title: Text('Expense Tracker'),
         actions: [
-          OpenContainer(
-            closedElevation: 0,
-            closedShape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(0),
-              ),
-            ),
-            transitionType: ContainerTransitionType.fadeThrough,
-            closedBuilder: (BuildContext _, VoidCallback openContainer) {
-              return IconButton(
-                icon: Icon(Icons.calendar_today,color: Colors.black,),
-                onPressed: openContainer,
-              );
-            },
-            openBuilder: (BuildContext _, VoidCallback __) {
-              return MonthlySummaryScreen();
-            },
-          ),
+        OpenContainer(
+  closedElevation: 0,
+  closedShape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(
+      Radius.circular(0),
+    ),
+  ),
+  transitionType: ContainerTransitionType.fadeThrough,
+  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+    return IconButton(
+      icon: Icon(Icons.calendar_today, color: Colors.black),
+      onPressed: openContainer,
+    );
+  },
+  openBuilder: (BuildContext _, VoidCallback __) {
+    // Parse the text to double
+    final double initialAmount = double.tryParse(_initialAmountController.text) ?? 0.0;
+
+    return MonthlySummaryScreen(initialAmount: initialAmount);
+  },
+),
+
         ],
       ),
       body: Padding(
