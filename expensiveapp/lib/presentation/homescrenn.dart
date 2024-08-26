@@ -88,9 +88,68 @@ class _MainScreenState extends State<MainScreen> {
       }
       setState(() {
         _selectedDate = pickedDate;
-        print(_selectedDate);
       });
     });
+  }
+
+  void _showInitialAmountDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter Initial Amount'),
+          content: Container(
+             height: MediaQuery.of(context).size.height *0.05,
+            child: TextField(
+             decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 232, 231, 231)),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20.0),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 241, 208, 99)),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20.0),
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: Color.fromARGB(255, 232, 231, 231),
+                                focusColor: Colors.amber,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50.0)),
+                                labelText: "Initial Amount",
+                                labelStyle: TextStyle(
+                                    color:
+                                        const Color.fromARGB(255, 83, 82, 82))),
+              controller: _initialAmountController,
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Submit'),
+              onPressed: () {
+                setState(() {
+                  _availableBalance = double.tryParse(_initialAmountController.text) ?? 0.0;
+                  _saveInitialAmount();
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -100,28 +159,25 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: Colors.white,
         title: Text('Expense Tracker'),
         actions: [
-        OpenContainer(
-  closedElevation: 0,
-  closedShape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(
-      Radius.circular(0),
-    ),
-  ),
-  transitionType: ContainerTransitionType.fadeThrough,
-  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-    return IconButton(
-      icon: Icon(Icons.calendar_today, color: Colors.black),
-      onPressed: openContainer,
-    );
-  },
-  openBuilder: (BuildContext _, VoidCallback __) {
-    // Parse the text to double
-    final double initialAmount = double.tryParse(_initialAmountController.text) ?? 0.0;
-
-    return MonthlySummaryScreen(initialAmount: initialAmount);
-  },
-),
-
+          OpenContainer(
+            closedElevation: 0,
+            closedShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(0),
+              ),
+            ),
+            transitionType: ContainerTransitionType.fadeThrough,
+            closedBuilder: (BuildContext _, VoidCallback openContainer) {
+              return IconButton(
+                icon: Icon(Icons.calendar_today, color: Colors.black),
+                onPressed: openContainer,
+              );
+            },
+            openBuilder: (BuildContext _, VoidCallback __) {
+              final double initialAmount = double.tryParse(_initialAmountController.text) ?? 0.0;
+              return MonthlySummaryScreen(initialAmount: initialAmount);
+            },
+          ),
         ],
       ),
       body: Padding(
@@ -130,26 +186,19 @@ class _MainScreenState extends State<MainScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextField(
-              decoration: InputDecoration(labelText: 'Initial Amount'),
-              controller: _initialAmountController,
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) {
-                setState(() {
-                  _availableBalance = double.tryParse(_initialAmountController.text) ?? 0.0;
-                  _saveInitialAmount();
-                });
-              },
+            ElevatedButton(
+              onPressed: _showInitialAmountDialog,
+              child: Text('Set Initial Amount'),
             ),
             SizedBox(height: 10),
             Text("Available Balance: \$${_availableBalance.toStringAsFixed(2)}"),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                TextButton(
-                  onPressed: _presentDatePicker,
-                  child: Text('Choose Date'),
-                ),
+               
+                ElevatedButton(onPressed: (){
+                  _presentDatePicker();
+                }, child: Row(children: [Text("Choose Date"),Icon(Icons.calendar_month_rounded)],)),
                 ElevatedButton(
                   onPressed: _addNewRow,
                   child: Text("Add New Row"),
@@ -161,21 +210,77 @@ class _MainScreenState extends State<MainScreen> {
                 itemCount: _expenseControllers.length,
                 itemBuilder: (ctx, index) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    padding:  EdgeInsets.symmetric(vertical: 4.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
+                       
+                          height: MediaQuery.of(context).size.height *0.05,
                           width: MediaQuery.of(context).size.width * 0.60,
-                          child: TextField(
-                            decoration: InputDecoration(labelText: 'Type'),
-                            controller: _expenseControllers[index]['type'],
-                          ),
+                          child: 
+                          
+                          TextFormField(
+                               controller: _expenseControllers[index]['type'],
+                          decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 232, 231, 231)),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20.0),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 241, 208, 99)),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20.0),
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Color.fromARGB(255, 232, 231, 231),
+                              focusColor: Colors.amber,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50.0)),
+                              labelText: "Type",
+                              labelStyle: TextStyle(
+                                  color:
+                                      const Color.fromARGB(255, 83, 82, 82))),
+                        ),
+                          
+                          
+                          
+                         
                         ),
                         Container(
-                          width: MediaQuery.of(context).size.width * 0.20,
+
+                          height: MediaQuery.of(context).size.height *0.05,
+                          width: MediaQuery.of(context).size.width * 0.30,
                           child: TextField(
-                            decoration: InputDecoration(labelText: 'Amount'),
+                           decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 232, 231, 231)),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20.0),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 241, 208, 99)),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20.0),
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Color.fromARGB(255, 232, 231, 231),
+                              focusColor: Colors.amber,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(50.0)),
+                              labelText: "Amount",
+                              labelStyle: TextStyle(
+                                  color:
+                                      const Color.fromARGB(255, 83, 82, 82))),
                             controller: _expenseControllers[index]['amount'],
                             keyboardType: TextInputType.number,
                           ),
@@ -189,7 +294,7 @@ class _MainScreenState extends State<MainScreen> {
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: _submitData,
-              child: Text('Submit All Expenses'),
+              child: Text('Submit'),
             ),
           ],
         ),
