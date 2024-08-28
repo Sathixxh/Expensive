@@ -2,6 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:expensiveapp/Domine/provider/mainprovider.dart';
 import 'package:expensiveapp/data/model/expensemodel.dart';
 import 'package:expensiveapp/presentation/listscrenn.dart';
+import 'package:expensiveapp/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -187,6 +188,9 @@ class _MainScreenState extends State<MainScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(primaryColor)
+              ),
               onPressed: _showInitialAmountDialog,
               child: Text('Set Initial Amount'),
             ),
@@ -196,103 +200,120 @@ class _MainScreenState extends State<MainScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                
-                ElevatedButton(onPressed: (){
+                ElevatedButton(
+                       style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(primaryColor)
+              ),
+                  onPressed: (){
                   _presentDatePicker();
                 }, child: Row(children: [Text("Choose Date"),Icon(Icons.calendar_month_rounded)],)),
                 ElevatedButton(
+                       style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(primaryColor)
+              ),
                   onPressed: _addNewRow,
                   child: Text("Add New Row"),
                 ),
               ],
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: _expenseControllers.length,
-                itemBuilder: (ctx, index) {
-                  return Padding(
-                    padding:  EdgeInsets.symmetric(vertical: 4.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                       
-                          height: MediaQuery.of(context).size.height *0.05,
-                          width: MediaQuery.of(context).size.width * 0.60,
-                          child: 
-                          
-                          TextFormField(
-                               controller: _expenseControllers[index]['type'],
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 232, 231, 231)),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 241, 208, 99)),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0),
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Color.fromARGB(255, 232, 231, 231),
-                              focusColor: Colors.amber,
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(50.0)),
-                              labelText: "Type",
-                              labelStyle: TextStyle(
-                                  color:
-                                      const Color.fromARGB(255, 83, 82, 82))),
-                        ),
-                          
-                          
-                          
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: ListView.builder(
+                  itemCount: _expenseControllers.length,
+                  itemBuilder: (ctx, index) {
+                    return Padding(
+                      padding:  EdgeInsets.symmetric(vertical: 4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
                          
-                        ),
-                        Container(
-
-                          height: MediaQuery.of(context).size.height *0.05,
-                          width: MediaQuery.of(context).size.width * 0.30,
-                          child: TextField(
-                           decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 232, 231, 231)),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0),
+                            height: MediaQuery.of(context).size.height *0.05,
+                            width: MediaQuery.of(context).size.width * 0.60,
+                            child: 
+                            
+                            TextFormField(
+                                 controller: _expenseControllers[index]['type'],
+                            decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 232, 231, 231)),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20.0),
+                                  ),
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 241, 208, 99)),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                         color: primaryColor
+                                      // color: Color.fromARGB(255, 241, 208, 99)
+                                      ),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20.0),
+                                  ),
                                 ),
-                              ),
-                              filled: true,
-                              fillColor: Color.fromARGB(255, 232, 231, 231),
-                              focusColor: Colors.amber,
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(50.0)),
-                              labelText: "Amount",
-                              labelStyle: TextStyle(
-                                  color:
-                                      const Color.fromARGB(255, 83, 82, 82))),
-                            controller: _expenseControllers[index]['amount'],
-                            keyboardType: TextInputType.number,
+                                filled: true,
+                                fillColor: Color.fromARGB(255, 232, 231, 231),
+                                focusColor: Colors.amber,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50.0)),
+                                labelText: "Type",
+                                labelStyle: TextStyle(
+                                    color:
+                                        const Color.fromARGB(255, 83, 82, 82))),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                            
+                            
+                            
+                           
+                          ),
+                          Container(
+                
+                            height: MediaQuery.of(context).size.height *0.05,
+                            width: MediaQuery.of(context).size.width * 0.30,
+                            child: TextField(
+                             decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 232, 231, 231)),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20.0),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: primaryColor
+                                      // Color.fromARGB(255, 241, 208, 99)
+                                      ),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20.0),
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: Color.fromARGB(255, 232, 231, 231),
+                                focusColor: Colors.amber,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50.0)),
+                                labelText: "Amount",
+                                labelStyle: TextStyle(
+                                    color:
+                                        const Color.fromARGB(255, 83, 82, 82))),
+                              controller: _expenseControllers[index]['amount'],
+                              keyboardType: TextInputType.number,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
-            SizedBox(height: 10),
+            // SizedBox(height: 10),
             ElevatedButton(
+                   style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(primaryColor)
+              ),
               onPressed: _submitData,
               child: Text('Submit'),
             ),

@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Expense Tracker',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          // primarySwatch: Colors.blue,
           useMaterial3: false
         ),
         home: MainScreen(),
