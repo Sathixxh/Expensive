@@ -54,6 +54,7 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
                   Text('Type', style: TextStyle(fontWeight: FontWeight.bold)),
                   Text('Total', style: TextStyle(fontWeight: FontWeight.bold)),
                   Text('Balance', style: TextStyle(fontWeight: FontWeight.bold)),
+                     
                 ],
               ),
             ),
@@ -97,7 +98,7 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
                                 child: Text(formattedDate, style: TextStyle(fontSize: 13)),
                               )),
                               Container(
-                                color: Colors.yellow,
+                             
                                 width: 50,
                                 child: Center(
                                   child: Text(
@@ -110,12 +111,12 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
                               ),
                               Container(
                                 width: 50,
-                                child: Text('\$ ${dayTotal.toStringAsFixed(2)}', style: TextStyle(fontSize: 13)),
+                                child: Text( dayTotal.toStringAsFixed(2), style: TextStyle(fontSize: 13)),
                               ),
                               Container(
                                  width: 50,
-                                color: Colors.amber,
-                                child: Center(child: Text('\$${currentBalance.toStringAsFixed(2)}', style: TextStyle(fontSize: 13)))),
+                               
+                                child: Center(child: Text(currentBalance.toStringAsFixed(2), style: TextStyle(fontSize: 13)))),
                             ],
                           ),
                           onTap: openContainer,

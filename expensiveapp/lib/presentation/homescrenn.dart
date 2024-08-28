@@ -112,14 +112,17 @@ class _MainScreenState extends State<MainScreen> {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 241, 208, 99)),
+                                      // color: Color.fromARGB(255, 241, 208, 99)
+                                       color: primaryColor
+                                      
+                                      ),
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(20.0),
                                   ),
                                 ),
                                 filled: true,
                                 fillColor: Color.fromARGB(255, 232, 231, 231),
-                                focusColor: Colors.amber,
+                               
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50.0)),
                                 labelText: "Initial Amount",
@@ -206,7 +209,12 @@ class _MainScreenState extends State<MainScreen> {
               ),
                   onPressed: (){
                   _presentDatePicker();
-                }, child: Row(children: [Text("Choose Date"),Icon(Icons.calendar_month_rounded)],)),
+                }, child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  
+                  children: [Text("Select Date"),
+                  SizedBox(width: 5,),
+                  Icon(Icons.calendar_month_rounded)],)),
                 ElevatedButton(
                        style: ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll(primaryColor)
@@ -309,7 +317,7 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ),
             ),
-            // SizedBox(height: 10),
+          
             ElevatedButton(
                    style: ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll(primaryColor)
@@ -317,9 +325,12 @@ class _MainScreenState extends State<MainScreen> {
               onPressed: _submitData,
               child: Text('Submit'),
             ),
+              SizedBox(height: 50),
           ],
         ),
       ),
     );
   }
 }
+
+//food roomrent metro bus snacks recharge person  movie
