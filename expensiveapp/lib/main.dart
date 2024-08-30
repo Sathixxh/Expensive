@@ -17,9 +17,11 @@ class MyApp extends StatelessWidget {
       create: (context) => ExpenseProvider(),
       child: MaterialApp(
         title: 'Expense Tracker',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           // primarySwatch: Colors.blue,
           useMaterial3: false
+
         ),
         home: MainScreen(),
         
@@ -27,3 +29,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

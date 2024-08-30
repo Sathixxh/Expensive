@@ -14,10 +14,34 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   DateTime _selectedDate = DateTime.now();
-  final TextEditingController _initialAmountController = TextEditingController();
+  final TextEditingController _initialAmountController =
+      TextEditingController();
   double _availableBalance = 0.0;
-  final List<Map<String, TextEditingController>> _expenseControllers = [
-    {'type': TextEditingController(), 'amount': TextEditingController()},
+  final List<Map<String, dynamic>> _expenseControllers = [
+    {
+      'type': TextEditingController(),
+      'amount': TextEditingController(),
+      'isOther': false,
+      'isPerson': false
+    },
+  ];
+  final List<String> typeList = [
+    "FoodBF",
+      "FoodLunch",
+    "Bus",
+    "Metro",
+    "Movie",
+    "Snacks",
+    "Person",
+    "HouseRent",
+    "Medical",
+    "Juice",
+    "MobileRecharge",
+    "Cosmetics",
+    "Haircut",
+    "Dress",
+    "shoes",
+    "Other",
   ];
 
   @override
@@ -41,7 +65,13 @@ class _MainScreenState extends State<MainScreen> {
   void _submitData() {
     final provider = Provider.of<ExpenseProvider>(context, listen: false);
     for (var controllers in _expenseControllers) {
-      final enteredType = controllers['type']!.text;
+      // Determine if the entered type should come from the text field or dropdown
+      final enteredType = controllers['isOther'] || controllers['isPerson']
+          ? controllers['type']!
+              .text // Use text field value if 'Other' or 'Person' is selected
+          : controllers[
+              'selectedType']; // Otherwise, use dropdown selected value
+      print(enteredType);
       final enteredAmount = double.tryParse(controllers['amount']!.text);
 
       if (enteredType.isEmpty || enteredAmount == null || enteredAmount <= 0) {
@@ -51,7 +81,7 @@ class _MainScreenState extends State<MainScreen> {
       provider.addExpense(
         Expense(
           date: _selectedDate,
-          type: enteredType,
+          type: enteredType, // Ensure that only the required type is stored
           amount: enteredAmount,
         ),
       );
@@ -63,17 +93,31 @@ class _MainScreenState extends State<MainScreen> {
 
       controllers['type']!.clear();
       controllers['amount']!.clear();
+      controllers['selectedType'] = null;
+      controllers['isOther'] = false;
+      controllers['isPerson'] = false;
     }
 
+    // Clear expense controllers and reset for new input
     setState(() {
       _expenseControllers.clear();
-      _expenseControllers.add({'type': TextEditingController(), 'amount': TextEditingController()});
+      _expenseControllers.add({
+        'type': TextEditingController(),
+        'amount': TextEditingController(),
+        'isOther': false,
+        'isPerson': false
+      });
     });
   }
 
   void _addNewRow() {
     setState(() {
-      _expenseControllers.add({'type': TextEditingController(), 'amount': TextEditingController()});
+      _expenseControllers.add({
+        'type': TextEditingController(),
+        'amount': TextEditingController(),
+        'isOther': false,
+        'isPerson': false
+      });
     });
   }
 
@@ -100,35 +144,31 @@ class _MainScreenState extends State<MainScreen> {
         return AlertDialog(
           title: Text('Enter Initial Amount'),
           content: Container(
-             height: MediaQuery.of(context).size.height *0.05,
+            height: MediaQuery.of(context).size.height * 0.05,
             child: TextField(
-             decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 232, 231, 231)),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      // color: Color.fromARGB(255, 241, 208, 99)
-                                       color: primaryColor
-                                      
-                                      ),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
-                                  ),
-                                ),
-                                filled: true,
-                                fillColor: Color.fromARGB(255, 232, 231, 231),
-                               
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(50.0)),
-                                labelText: "Initial Amount",
-                                labelStyle: TextStyle(
-                                    color:
-                                        const Color.fromARGB(255, 83, 82, 82))),
+              decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Color.fromARGB(255, 232, 231, 231)),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        // color: Color.fromARGB(255, 241, 208, 99)
+                        color: primaryColor),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Color.fromARGB(255, 232, 231, 231),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50.0)),
+                  labelText: "Initial Amount",
+                  labelStyle:
+                      TextStyle(color: const Color.fromARGB(255, 83, 82, 82))),
               controller: _initialAmountController,
               keyboardType: TextInputType.number,
             ),
@@ -144,7 +184,8 @@ class _MainScreenState extends State<MainScreen> {
               child: Text('Submit'),
               onPressed: () {
                 setState(() {
-                  _availableBalance = double.tryParse(_initialAmountController.text) ?? 0.0;
+                  _availableBalance =
+                      double.tryParse(_initialAmountController.text) ?? 0.0;
                   _saveInitialAmount();
                 });
                 Navigator.of(context).pop();
@@ -178,7 +219,8 @@ class _MainScreenState extends State<MainScreen> {
               );
             },
             openBuilder: (BuildContext _, VoidCallback __) {
-              final double initialAmount = double.tryParse(_initialAmountController.text) ?? 0.0;
+              final double initialAmount =
+                  double.tryParse(_initialAmountController.text) ?? 0.0;
               return MonthlySummaryScreen(initialAmount: initialAmount);
             },
           ),
@@ -192,33 +234,32 @@ class _MainScreenState extends State<MainScreen> {
           children: <Widget>[
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(primaryColor)
-              ),
+                  backgroundColor: WidgetStatePropertyAll(primaryColor)),
               onPressed: _showInitialAmountDialog,
               child: Text('Set Initial Amount'),
             ),
             SizedBox(height: 10),
-            Text("Available Balance: \$${_availableBalance.toStringAsFixed(2)}"),
+            Text(
+                "Available Balance: \$${_availableBalance.toStringAsFixed(2)}"),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-               
                 ElevatedButton(
-                       style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(primaryColor)
-              ),
-                  onPressed: (){
-                  _presentDatePicker();
-                }, child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  
-                  children: [Text("Select Date"),
-                  SizedBox(width: 5,),
-                  Icon(Icons.calendar_month_rounded)],)),
+                  style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(primaryColor)),
+                  onPressed: _presentDatePicker,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Select Date"),
+                      SizedBox(width: 5),
+                      Icon(Icons.calendar_month_rounded)
+                    ],
+                  ),
+                ),
                 ElevatedButton(
-                       style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(primaryColor)
-              ),
+                  style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(primaryColor)),
                   onPressed: _addNewRow,
                   child: Text("Add New Row"),
                 ),
@@ -231,83 +272,160 @@ class _MainScreenState extends State<MainScreen> {
                   itemCount: _expenseControllers.length,
                   itemBuilder: (ctx, index) {
                     return Padding(
-                      padding:  EdgeInsets.symmetric(vertical: 4.0),
+                      padding: EdgeInsets.symmetric(vertical: 4.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                         
-                            height: MediaQuery.of(context).size.height *0.05,
+                            height: MediaQuery.of(context).size.height * 0.05,
                             width: MediaQuery.of(context).size.width * 0.60,
-                            child: 
-                            
-                            TextFormField(
-                                 controller: _expenseControllers[index]['type'],
-                            decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 232, 231, 231)),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                         color: primaryColor
-                                      // color: Color.fromARGB(255, 241, 208, 99)
+                            child: _expenseControllers[index]['isOther'] ||
+                                    _expenseControllers[index]['isPerson']
+                                ? TextFormField(
+                                    controller: _expenseControllers[index]
+                                        ['type'],
+                                    onChanged: (value) {
+                                      if (_expenseControllers[index]
+                                          ['isPerson']) {
+                                        // Check if 'Person ' is already a prefix
+                                        if (!value.startsWith('Person ')) {
+                                          // If not, prepend 'Person ' to the input text
+                                          _expenseControllers[index]['type']
+                                              .text = 'Person $value';
+                                          // Move the cursor to the end of the text field
+                                          _expenseControllers[index]['type']
+                                                  .selection =
+                                              TextSelection.fromPosition(
+                                            TextPosition(
+                                                offset:
+                                                    _expenseControllers[index]
+                                                            ['type']
+                                                        .text
+                                                        .length),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    decoration: InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color.fromARGB(
+                                                255, 232, 231, 231)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0)),
                                       ),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: primaryColor),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0)),
+                                      ),
+                                      filled: true,
+                                      fillColor:
+                                          Color.fromARGB(255, 232, 231, 231),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50.0)),
+                                      labelText: "Type",
+                                      labelStyle: TextStyle(
+                                          color: const Color.fromARGB(
+                                              255, 83, 82, 82)),
+                                    ),
+                                  )
+                                : DropdownButtonFormField<String>(
+                                    value: _expenseControllers[index]
+                                        ['selectedType'],
+                                    items: typeList.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        _expenseControllers[index]
+                                            ['selectedType'] = newValue;
+                                        if (newValue == 'Other') {
+                                          _expenseControllers[index]
+                                              ['isOther'] = true;
+                                          _expenseControllers[index]
+                                              ['isPerson'] = false;
+                                          _expenseControllers[index]['type']!
+                                              .text = '';
+                                        } else if (newValue == 'Person') {
+                                          _expenseControllers[index]
+                                              ['isPerson'] = true;
+                                          _expenseControllers[index]
+                                              ['isOther'] = false;
+                                          _expenseControllers[index]['type']!
+                                                  .text =
+                                              ''; // Clear the text field if 'Person' is selected
+                                        } else {
+                                          _expenseControllers[index]
+                                              ['isOther'] = false;
+                                          _expenseControllers[index]
+                                              ['isPerson'] = false;
+                                          _expenseControllers[index]
+                                              ['selectedType'] = newValue;
+                                        }
+                                      });
+                                    },
+                                    decoration: InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color.fromARGB(
+                                                255, 232, 231, 231)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0)),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: primaryColor),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0)),
+                                      ),
+                                      filled: true,
+                                      fillColor:
+                                          Color.fromARGB(255, 232, 231, 231),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50.0)),
+                                      labelText: "Select Type",
+                                      labelStyle: TextStyle(
+                                          color: const Color.fromARGB(
+                                              255, 83, 82, 82)),
+                                    ),
                                   ),
-                                ),
-                                filled: true,
-                                fillColor: Color.fromARGB(255, 232, 231, 231),
-                                focusColor: Colors.amber,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(50.0)),
-                                labelText: "Type",
-                                labelStyle: TextStyle(
-                                    color:
-                                        const Color.fromARGB(255, 83, 82, 82))),
                           ),
-                            
-                            
-                            
-                           
-                          ),
+                          SizedBox(width: 10),
                           Container(
-                
-                            height: MediaQuery.of(context).size.height *0.05,
+                            height: MediaQuery.of(context).size.height * 0.05,
                             width: MediaQuery.of(context).size.width * 0.30,
-                            child: TextField(
-                             decoration: InputDecoration(
+                            child: TextFormField(
+                              controller: _expenseControllers[index]['amount'],
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 232, 231, 231)),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
-                                  ),
+                                      color:
+                                          Color.fromARGB(255, 232, 231, 231)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: primaryColor
-                                      // Color.fromARGB(255, 241, 208, 99)
-                                      ),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
-                                  ),
+                                  borderSide: BorderSide(color: primaryColor),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0)),
                                 ),
                                 filled: true,
                                 fillColor: Color.fromARGB(255, 232, 231, 231),
-                                focusColor: Colors.amber,
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50.0)),
                                 labelText: "Amount",
                                 labelStyle: TextStyle(
                                     color:
-                                        const Color.fromARGB(255, 83, 82, 82))),
-                              controller: _expenseControllers[index]['amount'],
-                              keyboardType: TextInputType.number,
+                                        const Color.fromARGB(255, 83, 82, 82)),
+                              ),
                             ),
                           ),
                         ],
@@ -317,20 +435,14 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ),
             ),
-          
-            ElevatedButton(
-                   style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(primaryColor)
-              ),
-              onPressed: _submitData,
-              child: Text('Submit'),
-            ),
-              SizedBox(height: 50),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: primaryColor,
+        child: Icon(Icons.save),
+        onPressed: _submitData,
       ),
     );
   }
 }
-
-//food roomrent metro bus snacks recharge person  movie

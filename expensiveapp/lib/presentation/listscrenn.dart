@@ -136,8 +136,6 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
     );
   }
 }
-
-
 class ExpenseListScreen extends StatelessWidget {
   final DateTime date;
 
@@ -145,6 +143,31 @@ class ExpenseListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, String> imageMap = {
+      "Person": "assets/images/man.png",
+      "Petrol": "assets/images/petrol.png",
+       "Bus": "assets/images/bus.png",
+      "FoodBF": "assets/images/breakfast.png",
+        "FoodLunch": "assets/images/fried-rice.png",
+         "Metro": "assets/images/train.png",
+   
+  "Movie": "assets/images/movie-theater.png",
+      "Snacks": "assets/images/snack.png",
+         "HouseRent": "assets/images/residential.png",
+      "Medical": "assets/images/hospital.png",
+               "Juice": "assets/images/watermelon-smoothie.png",
+      "MobileRecharge": "assets/images/smartphone.png",
+                     "Cosmetics": "assets/images/cosmetics.png",
+      "Haircut": "assets/images/haircut.png",
+
+                 "Dress": "assets/images/bomber.png",
+      "shoes": "assets/images/shoes.png",
+          "Others": "assets/images/unknown.png",
+
+
+      // Add other mappings for expense types and their corresponding images
+    };
+
     final provider = Provider.of<ExpenseProvider>(context);
     final expenses = provider.expenses.where((e) =>
         e.date.year == date.year &&
@@ -159,9 +182,30 @@ class ExpenseListScreen extends StatelessWidget {
         itemCount: expenses.length,
         itemBuilder: (ctx, index) {
           final expense = expenses[index];
+
+          // Determine the image path based on expense type containing keywords
+          String imagePath = "assets/images/default.png"; // Default image path
+          String displayText = expense.type; // Default display text
+
+          for (var key in imageMap.keys) {
+            if (expense.type.contains(key)) {
+              imagePath = imageMap[key]!;
+              
+              // Remove the key from the display text if it is found
+              // displayText = expense.type.replaceAll(key, '').trim();
+              break;
+            }
+          }
+
           return ListTile(
-            title: Text(expense.type),
+            title: Text(displayText), // Display trimmed expense type
             subtitle: Text('\$${expense.amount.toStringAsFixed(2)}'),
+            leading: Image.asset(
+              imagePath,
+              width: 40, // Optional: specify width and height if needed
+              height: 40,
+              fit: BoxFit.cover,
+            ),
           );
         },
       ),
