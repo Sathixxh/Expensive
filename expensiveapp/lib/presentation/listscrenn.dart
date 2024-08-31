@@ -24,7 +24,8 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
     // Group expenses by date
     final groupedExpenses = <DateTime, List<Expense>>{};
     for (var expense in expenses) {
-      final date = DateTime(expense.date.year, expense.date.month, expense.date.day);
+      final date =
+          DateTime(expense.date.year, expense.date.month, expense.date.day);
       if (!groupedExpenses.containsKey(date)) {
         groupedExpenses[date] = [];
       }
@@ -55,8 +56,8 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
                   Text('Date', style: TextStyle(fontWeight: FontWeight.bold)),
                   Text('Type', style: TextStyle(fontWeight: FontWeight.bold)),
                   Text('Total', style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text('Balance', style: TextStyle(fontWeight: FontWeight.bold)),
-                     
+                  Text('Balance',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -79,7 +80,8 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
                   final types = dailyExpenses.map((e) => e.type).join(', ');
 
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 0, horizontal: 0.0),
                     child: OpenContainer(
                       transitionType: ContainerTransitionType.fade,
                       closedElevation: 0,
@@ -92,20 +94,23 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(left: 10),
-                                child: Text((index + 1).toString(), style: TextStyle(fontSize: 13)),
+                                child: Text((index + 1).toString(),
+                                    style: TextStyle(fontSize: 13)),
                               ),
-                              Center(child: Padding(
-                                padding: const EdgeInsets.only(left: 
-                                10),
-                                child: Text(formattedDate, style: TextStyle(fontSize: 13)),
+                              Center(
+                                  child: Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Text(formattedDate,
+                                    style: TextStyle(fontSize: 13)),
                               )),
                               Container(
-                             
                                 width: 50,
                                 child: Center(
                                   child: Text(
                                     types,
-                                    style: TextStyle(fontSize: 13, overflow: TextOverflow.ellipsis),
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        overflow: TextOverflow.ellipsis),
                                     overflow: TextOverflow.ellipsis,
                                     softWrap: false,
                                   ),
@@ -113,12 +118,15 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
                               ),
                               Container(
                                 width: 50,
-                                child: Text( dayTotal.toStringAsFixed(2), style: TextStyle(fontSize: 13)),
+                                child: Text(dayTotal.toStringAsFixed(2),
+                                    style: TextStyle(fontSize: 13)),
                               ),
                               Container(
-                                 width: 50,
-                               
-                                child: Center(child: Text(currentBalance.toStringAsFixed(2), style: TextStyle(fontSize: 13)))),
+                                  width: 50,
+                                  child: Center(
+                                      child: Text(
+                                          currentBalance.toStringAsFixed(2),
+                                          style: TextStyle(fontSize: 13)))),
                             ],
                           ),
                           onTap: openContainer,
@@ -129,7 +137,12 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
                       },
                     ),
                   );
-                }, separatorBuilder: (BuildContext context, int index) { return SizedBox(height: 3,) ;},
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return SizedBox(
+                    height: 3,
+                  );
+                },
               ),
             ),
           ],
@@ -138,6 +151,7 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
     );
   }
 }
+
 class ExpenseListScreen extends StatelessWidget {
   final DateTime date;
 
@@ -148,42 +162,45 @@ class ExpenseListScreen extends StatelessWidget {
     final Map<String, String> imageMap = {
       "Person": "assets/images/man.png",
       "Petrol": "assets/images/petrol.png",
-       "Bus": "assets/images/bus.png",
+      "Bus": "assets/images/bus.png",
       "FoodBF": "assets/images/breakfast.png",
-        "FoodLunch": "assets/images/fried-rice.png",
-         "Metro": "assets/images/train.png",
-     "Movie": "assets/images/movie-theater.png",
+      "FoodLunch": "assets/images/fried-rice.png",
+      "Metro": "assets/images/train.png",
+      "Movie": "assets/images/movie-theater.png",
       "Snacks": "assets/images/snack.png",
-         "HouseRent": "assets/images/residential.png",
+      "HouseRent": "assets/images/residential.png",
       "Medical": "assets/images/hospital.png",
-               "Juice": "assets/images/watermelon-smoothie.png",
+      "Juice": "assets/images/watermelon-smoothie.png",
       "MobileRecharge": "assets/images/smartphone.png",
-                     "Cosmetics": "assets/images/cosmetics.png",
+      "Cosmetics": "assets/images/cosmetics.png",
       "Haircut": "assets/images/haircut.png",
-                 "Dress": "assets/images/bomber.png",
+      "Dress": "assets/images/bomber.png",
       "shoes": "assets/images/shoes.png",
-          "Others": "assets/images/unknown.png",
-             "Fruit": "assets/images/fruit.png",
-                 "Loan": "assets/images/loan.png",
+      "Others": "assets/images/unknown.png",
+      "Fruit": "assets/images/fruit.png",
+      "Loan": "assets/images/loan.png",
       "Grocery": "assets/images/shopping-bag.png",
-          "Vegetables": "assets/images/vegetable.png",
-            "Drinks": "assets/images/drink.png",
-                "Tea/cofee": "assets/images/green-tea.png",
-
+      "Vegetables": "assets/images/vegetable.png",
+      "Drinks": "assets/images/drink.png",
+      "Tea/cofee": "assets/images/green-tea.png",
+      "Trip": "assets/images/travel-bag.png",
 
       // Add other mappings for expense types and their corresponding images
     };
 
     final provider = Provider.of<ExpenseProvider>(context);
-    final expenses = provider.expenses.where((e) =>
-        e.date.year == date.year &&
-        e.date.month == date.month &&
-        e.date.day == date.day).toList();
+    final expenses = provider.expenses
+        .where((e) =>
+            e.date.year == date.year &&
+            e.date.month == date.month &&
+            e.date.day == date.day)
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
-         backgroundColor: primaryColor,
-        title: Text('Transactions for ${DateFormat('yyyy-MM-dd').format(date)}'),
+        backgroundColor: primaryColor,
+        title:
+            Text('Transactions for ${DateFormat('yyyy-MM-dd').format(date)}'),
       ),
       body: ListView.builder(
         itemCount: expenses.length,
@@ -197,7 +214,7 @@ class ExpenseListScreen extends StatelessWidget {
           for (var key in imageMap.keys) {
             if (expense.type.contains(key)) {
               imagePath = imageMap[key]!;
-              
+
               break;
             }
           }
@@ -205,15 +222,13 @@ class ExpenseListScreen extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.all(5.0),
             child: Card(
-              color: Color.fromRGBO(242, 243, 252, 1),
+              color: Color.fromRGBO(253, 253, 255, 1),
               elevation: 3,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15)
-              ),
-               
+                  borderRadius: BorderRadius.circular(15)),
               child: ListTile(
                 title: Padding(
-                padding: const EdgeInsets.only(left: 10),
+                  padding: const EdgeInsets.only(left: 10),
                   child: Text(displayText),
                 ), // Display trimmed expense type
                 subtitle: Padding(
@@ -224,7 +239,7 @@ class ExpenseListScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 10),
                   child: Image.asset(
                     imagePath,
-                    width: 40, 
+                    width: 40,
                     height: 40,
                     fit: BoxFit.cover,
                   ),

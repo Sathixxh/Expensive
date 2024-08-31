@@ -47,6 +47,7 @@ class _MainScreenState extends State<MainScreen> {
        "Loan",
         "Tea/cofee",
        "Drinks",
+       "Trip",
     "Other",
   ];
 
@@ -245,31 +246,37 @@ class _MainScreenState extends State<MainScreen> {
               child: Text('Set Initial Amount'),
             ),
             SizedBox(height: 10),
-            Text(
-                "Available Balance: \₹${_availableBalance.toStringAsFixed(2)}"),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(primaryColor)),
-                  onPressed: _presentDatePicker,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Select Date"),
-                      SizedBox(width: 5),
-                      Icon(Icons.calendar_month_rounded)
-                    ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(3, 5, 3, 5),
+              child: Text(
+                  "Available Balance: \₹${_availableBalance.toStringAsFixed(2)}"),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(primaryColor)),
+                    onPressed: _presentDatePicker,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Select Date"),
+                        SizedBox(width: 5),
+                        Icon(Icons.calendar_month_rounded)
+                      ],
+                    ),
                   ),
-                ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(primaryColor)),
-                  onPressed: _addNewRow,
-                  child: Text("Add New Row"),
-                ),
-              ],
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(primaryColor)),
+                    onPressed: _addNewRow,
+                    child: Text("Add New Row"),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: Padding(
@@ -379,7 +386,7 @@ class _MainScreenState extends State<MainScreen> {
                                             value,
                                             style: TextStyle(
                                               fontSize:
-                                                  14, // Adjust the font size as needed
+                                                  12, // Adjust the font size as needed
                                             ),
                                           ),
                                         );
@@ -489,11 +496,7 @@ class _MainScreenState extends State<MainScreen> {
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   backgroundColor: primaryColor,
-      //   child: Icon(Icons.save),
-      //   onPressed: _submitData,
-      // ),
+
     );
   }
 }
