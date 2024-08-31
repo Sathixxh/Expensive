@@ -1,6 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:expensiveapp/Domine/provider/mainprovider.dart';
 import 'package:expensiveapp/data/model/expensemodel.dart';
+import 'package:expensiveapp/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +39,7 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: primaryColor,
         title: Text('Monthly Summary'),
       ),
       body: Padding(
@@ -59,7 +61,7 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
+              child: ListView.separated(
                 itemCount: monthlyDates.length,
                 itemBuilder: (ctx, index) {
                   final date = monthlyDates[index];
@@ -127,7 +129,7 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
                       },
                     ),
                   );
-                },
+                }, separatorBuilder: (BuildContext context, int index) { return SizedBox(height: 3,) ;},
               ),
             ),
           ],
@@ -150,8 +152,7 @@ class ExpenseListScreen extends StatelessWidget {
       "FoodBF": "assets/images/breakfast.png",
         "FoodLunch": "assets/images/fried-rice.png",
          "Metro": "assets/images/train.png",
-   
-  "Movie": "assets/images/movie-theater.png",
+     "Movie": "assets/images/movie-theater.png",
       "Snacks": "assets/images/snack.png",
          "HouseRent": "assets/images/residential.png",
       "Medical": "assets/images/hospital.png",
@@ -159,10 +160,15 @@ class ExpenseListScreen extends StatelessWidget {
       "MobileRecharge": "assets/images/smartphone.png",
                      "Cosmetics": "assets/images/cosmetics.png",
       "Haircut": "assets/images/haircut.png",
-
                  "Dress": "assets/images/bomber.png",
       "shoes": "assets/images/shoes.png",
           "Others": "assets/images/unknown.png",
+             "Fruit": "assets/images/fruit.png",
+                 "Loan": "assets/images/loan.png",
+      "Grocery": "assets/images/shopping-bag.png",
+          "Vegetables": "assets/images/vegetable.png",
+            "Drinks": "assets/images/drink.png",
+                "Tea/cofee": "assets/images/green-tea.png",
 
 
       // Add other mappings for expense types and their corresponding images
@@ -176,6 +182,7 @@ class ExpenseListScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+         backgroundColor: primaryColor,
         title: Text('Transactions for ${DateFormat('yyyy-MM-dd').format(date)}'),
       ),
       body: ListView.builder(
@@ -191,20 +198,38 @@ class ExpenseListScreen extends StatelessWidget {
             if (expense.type.contains(key)) {
               imagePath = imageMap[key]!;
               
-              // Remove the key from the display text if it is found
-              // displayText = expense.type.replaceAll(key, '').trim();
               break;
             }
           }
 
-          return ListTile(
-            title: Text(displayText), // Display trimmed expense type
-            subtitle: Text('\$${expense.amount.toStringAsFixed(2)}'),
-            leading: Image.asset(
-              imagePath,
-              width: 40, // Optional: specify width and height if needed
-              height: 40,
-              fit: BoxFit.cover,
+          return Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Card(
+              color: Color.fromRGBO(242, 243, 252, 1),
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15)
+              ),
+               
+              child: ListTile(
+                title: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                  child: Text(displayText),
+                ), // Display trimmed expense type
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text('\₹${expense.amount.toStringAsFixed(2)}'),
+                ),
+                leading: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Image.asset(
+                    imagePath,
+                    width: 40, 
+                    height: 40,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
             ),
           );
         },

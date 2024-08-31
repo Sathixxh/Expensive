@@ -17,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   final TextEditingController _initialAmountController =
       TextEditingController();
   double _availableBalance = 0.0;
-  final List<Map<String, dynamic>> _expenseControllers = [
+  final List<Map<String, dynamic>> expenseControllers = [
     {
       'type': TextEditingController(),
       'amount': TextEditingController(),
@@ -27,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   ];
   final List<String> typeList = [
     "FoodBF",
-      "FoodLunch",
+    "FoodLunch",
     "Bus",
     "Metro",
     "Movie",
@@ -41,6 +41,12 @@ class _MainScreenState extends State<MainScreen> {
     "Haircut",
     "Dress",
     "shoes",
+    "Fruits",
+     "Vegetables",
+      "Grocery",
+       "Loan",
+        "Tea/cofee",
+       "Drinks",
     "Other",
   ];
 
@@ -64,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
 
   void _submitData() {
     final provider = Provider.of<ExpenseProvider>(context, listen: false);
-    for (var controllers in _expenseControllers) {
+    for (var controllers in expenseControllers) {
       // Determine if the entered type should come from the text field or dropdown
       final enteredType = controllers['isOther'] || controllers['isPerson']
           ? controllers['type']!
@@ -100,8 +106,8 @@ class _MainScreenState extends State<MainScreen> {
 
     // Clear expense controllers and reset for new input
     setState(() {
-      _expenseControllers.clear();
-      _expenseControllers.add({
+      expenseControllers.clear();
+      expenseControllers.add({
         'type': TextEditingController(),
         'amount': TextEditingController(),
         'isOther': false,
@@ -112,7 +118,7 @@ class _MainScreenState extends State<MainScreen> {
 
   void _addNewRow() {
     setState(() {
-      _expenseControllers.add({
+      expenseControllers.add({
         'type': TextEditingController(),
         'amount': TextEditingController(),
         'isOther': false,
@@ -240,7 +246,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             SizedBox(height: 10),
             Text(
-                "Available Balance: \$${_availableBalance.toStringAsFixed(2)}"),
+                "Available Balance: \₹${_availableBalance.toStringAsFixed(2)}"),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -269,180 +275,226 @@ class _MainScreenState extends State<MainScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: ListView.builder(
-                  itemCount: _expenseControllers.length,
+                  itemCount: expenseControllers.length,
                   itemBuilder: (ctx, index) {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.05,
-                            width: MediaQuery.of(context).size.width * 0.60,
-                            child: _expenseControllers[index]['isOther'] ||
-                                    _expenseControllers[index]['isPerson']
-                                ? TextFormField(
-                                    controller: _expenseControllers[index]
-                                        ['type'],
-                                    onChanged: (value) {
-                                      if (_expenseControllers[index]
-                                          ['isPerson']) {
-                                        // Check if 'Person ' is already a prefix
-                                        if (!value.startsWith('Person ')) {
-                                          // If not, prepend 'Person ' to the input text
-                                          _expenseControllers[index]['type']
-                                              .text = 'Person $value';
-                                          // Move the cursor to the end of the text field
-                                          _expenseControllers[index]['type']
-                                                  .selection =
-                                              TextSelection.fromPosition(
-                                            TextPosition(
-                                                offset:
-                                                    _expenseControllers[index]
-                                                            ['type']
-                                                        .text
-                                                        .length),
-                                          );
+                    final item =expenseControllers[index];
+                    return Dismissible(
+              key: Key(item['id'].toString()),
+                       onDismissed: (direction) {
+                // Remove the item from the data source.
+                setState(() {
+                  expenseControllers.removeAt(index);
+                });
+                
+
+                // Then show a snackbar.
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(' Remove')));
+              },
+               background: Container(
+                decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 250, 134, 126),
+                  borderRadius: BorderRadius.circular(15)),
+              
+               child: Row(
+            
+                 children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Text("Swipe To Remove"),
+                  ),
+                   Icon(Icons.delete_forever_rounded),
+                 ],
+               ),),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.061,
+                              width: MediaQuery.of(context).size.width * 0.60,
+                              child: expenseControllers[index]['isOther'] ||
+                                      expenseControllers[index]['isPerson']
+                                  ? TextFormField(
+                                      controller: expenseControllers[index]
+                                          ['type'],
+                                      onChanged: (value) {
+                                        if (expenseControllers[index]
+                                            ['isPerson']) {
+                                          // Check if 'Person ' is already a prefix
+                                          if (!value.startsWith('Person ')) {
+                                            // If not, prepend 'Person ' to the input text
+                                            expenseControllers[index]['type']
+                                                .text = 'Person $value';
+                                            // Move the cursor to the end of the text field
+                                            expenseControllers[index]['type']
+                                                    .selection =
+                                                TextSelection.fromPosition(
+                                              TextPosition(
+                                                  offset:
+                                                      expenseControllers[index]
+                                                              ['type']
+                                                          .text
+                                                          .length),
+                                            );
+                                          }
                                         }
-                                      }
-                                    },
-                                    decoration: InputDecoration(
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Color.fromARGB(
-                                                255, 232, 231, 231)),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20.0)),
+                                      },
+                                      decoration: InputDecoration(
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Color.fromARGB(
+                                                  255, 232, 231, 231)),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: primaryColor),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                        ),
+                                        filled: true,
+                                        fillColor:
+                                            Color.fromARGB(255, 232, 231, 231),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(50.0)),
+                                        labelText: "Type",
+                                        labelStyle: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 83, 82, 82)),
                                       ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: primaryColor),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20.0)),
-                                      ),
-                                      filled: true,
-                                      fillColor:
-                                          Color.fromARGB(255, 232, 231, 231),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50.0)),
-                                      labelText: "Type",
-                                      labelStyle: TextStyle(
-                                          color: const Color.fromARGB(
-                                              255, 83, 82, 82)),
-                                    ),
-                                  )
-                                : DropdownButtonFormField<String>(
-                                    value: _expenseControllers[index]
-                                        ['selectedType'],
-                                    items: typeList.map((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        _expenseControllers[index]
-                                            ['selectedType'] = newValue;
-                                        if (newValue == 'Other') {
-                                          _expenseControllers[index]
-                                              ['isOther'] = true;
-                                          _expenseControllers[index]
-                                              ['isPerson'] = false;
-                                          _expenseControllers[index]['type']!
-                                              .text = '';
-                                        } else if (newValue == 'Person') {
-                                          _expenseControllers[index]
-                                              ['isPerson'] = true;
-                                          _expenseControllers[index]
-                                              ['isOther'] = false;
-                                          _expenseControllers[index]['type']!
-                                                  .text =
-                                              ''; // Clear the text field if 'Person' is selected
-                                        } else {
-                                          _expenseControllers[index]
-                                              ['isOther'] = false;
-                                          _expenseControllers[index]
-                                              ['isPerson'] = false;
-                                          _expenseControllers[index]
+                                    )
+                                  : DropdownButtonFormField<String>(
+                                      alignment: Alignment.topRight,
+                                      // padding: EdgeInsets.all(15),
+                                      value: expenseControllers[index]
+                                          ['selectedType'],
+                                      items: typeList.map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(
+                                            value,
+                                            style: TextStyle(
+                                              fontSize:
+                                                  14, // Adjust the font size as needed
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          expenseControllers[index]
                                               ['selectedType'] = newValue;
-                                        }
-                                      });
-                                    },
-                                    decoration: InputDecoration(
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Color.fromARGB(
-                                                255, 232, 231, 231)),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20.0)),
+                                          if (newValue == 'Other') {
+                                            expenseControllers[index]
+                                                ['isOther'] = true;
+                                            expenseControllers[index]
+                                                ['isPerson'] = false;
+                                            expenseControllers[index]['type']!
+                                                .text = '';
+                                          } else if (newValue == 'Person') {
+                                            expenseControllers[index]
+                                                ['isPerson'] = true;
+                                            expenseControllers[index]
+                                                ['isOther'] = false;
+                                            expenseControllers[index]['type']!
+                                                .text = '';
+                                            // Clear the text field if 'Person' is selected
+                                          } else {
+                                            expenseControllers[index]
+                                                ['isOther'] = false;
+                                            expenseControllers[index]
+                                                ['isPerson'] = false;
+                                            expenseControllers[index]
+                                                ['selectedType'] = newValue;
+                                          }
+                                        });
+                                      },
+                                      decoration: InputDecoration(
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Color.fromARGB(
+                                                  255, 232, 231, 231)),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: primaryColor),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                        ),
+                                        filled: true,
+                                        fillColor:
+                                            Color.fromARGB(255, 232, 231, 231),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(50.0)),
+                                        labelText: "Select Type",
+                                        labelStyle: TextStyle(
+                                            color: const Color.fromARGB(
+                                                255, 83, 82, 82)),
                                       ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: primaryColor),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20.0)),
-                                      ),
-                                      filled: true,
-                                      fillColor:
-                                          Color.fromARGB(255, 232, 231, 231),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50.0)),
-                                      labelText: "Select Type",
-                                      labelStyle: TextStyle(
-                                          color: const Color.fromARGB(
-                                              255, 83, 82, 82)),
                                     ),
+                            ),
+                            SizedBox(width: 10),
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.060,
+                              width: MediaQuery.of(context).size.width * 0.30,
+                              child: TextFormField(
+                                controller: expenseControllers[index]['amount'],
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 232, 231, 231)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20.0)),
                                   ),
-                          ),
-                          SizedBox(width: 10),
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.05,
-                            width: MediaQuery.of(context).size.width * 0.30,
-                            child: TextFormField(
-                              controller: _expenseControllers[index]['amount'],
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: primaryColor),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20.0)),
+                                  ),
+                                  filled: true,
+                                  fillColor: Color.fromARGB(255, 232, 231, 231),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(50.0)),
+                                  labelText: "Amount",
+                                  labelStyle: TextStyle(
                                       color:
-                                          Color.fromARGB(255, 232, 231, 231)),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20.0)),
+                                          const Color.fromARGB(255, 83, 82, 82)),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: primaryColor),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20.0)),
-                                ),
-                                filled: true,
-                                fillColor: Color.fromARGB(255, 232, 231, 231),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(50.0)),
-                                labelText: "Amount",
-                                labelStyle: TextStyle(
-                                    color:
-                                        const Color.fromARGB(255, 83, 82, 82)),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },
                 ),
               ),
             ),
+            ElevatedButton(
+               style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(primaryColor)),
+              
+              
+              onPressed: (){ _submitData();}, child: Text("Submit")),
+            SizedBox(height: 30,)
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: primaryColor,
-        child: Icon(Icons.save),
-        onPressed: _submitData,
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: primaryColor,
+      //   child: Icon(Icons.save),
+      //   onPressed: _submitData,
+      // ),
     );
   }
 }
+

@@ -1,7 +1,6 @@
 // lib/main.dart
 import 'package:expensiveapp/Domine/provider/mainprovider.dart';
 import 'package:expensiveapp/presentation/homescrenn.dart';
-import 'package:expensiveapp/presentation/listscrenn.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
