@@ -75,7 +75,7 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
 
                   // Update the current balance
                   currentBalance -= dayTotal;
-// 'DD-MM-YYYY'
+
                   final formattedDate = DateFormat('dd-MM-yyyy').format(date);
                   final types = dailyExpenses.map((e) => e.type).join(', ');
 
@@ -214,7 +214,6 @@ class ExpenseListScreen extends StatelessWidget {
           for (var key in imageMap.keys) {
             if (expense.type.contains(key)) {
               imagePath = imageMap[key]!;
-
               break;
             }
           }
@@ -230,7 +229,7 @@ class ExpenseListScreen extends StatelessWidget {
                 title: Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: Text(displayText),
-                ), // Display trimmed expense type
+                ),
                 subtitle: Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: Text('\₹${expense.amount.toStringAsFixed(2)}'),
@@ -243,6 +242,21 @@ class ExpenseListScreen extends StatelessWidget {
                     height: 40,
                     fit: BoxFit.cover,
                   ),
+                ),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    // Remove the expense from the provider
+                    provider.removeExpense(expense);
+
+                    // Show a snackbar to confirm deletion
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Expense removed!'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),

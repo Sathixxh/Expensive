@@ -287,11 +287,24 @@ class _MainScreenState extends State<MainScreen> {
                     final item =expenseControllers[index];
                     return Dismissible(
               key: Key(item['id'].toString()),
-                       onDismissed: (direction) {
-                // Remove the item from the data source.
-                setState(() {
-                  expenseControllers.removeAt(index);
-                });
+                //        onDismissed: (direction) {
+                // // Remove the item from the data source.
+                // setState(() {
+                //   expenseControllers.removeAt(index);
+                // });
+                onDismissed: (direction) {
+  setState(() {
+    // Retrieve the amount of the removed item and update the available balance
+    double removedAmount = double.tryParse(item['amount']?.text ?? '0') ?? 0;
+    _availableBalance += removedAmount; // Add back the removed amount
+
+    expenseControllers.removeAt(index); // Remove the item from the list
+    _saveInitialAmount(); // Save the updated available balance
+  });
+
+  // Then show a snackbar.
+
+
                 
 
                 // Then show a snackbar.
@@ -375,8 +388,9 @@ class _MainScreenState extends State<MainScreen> {
                                       ),
                                     )
                                   : DropdownButtonFormField<String>(
+                                    itemHeight: 50,
                                       alignment: Alignment.topRight,
-                                      // padding: EdgeInsets.all(15),
+                                 
                                       value: expenseControllers[index]
                                           ['selectedType'],
                                       items: typeList.map((String value) {
